@@ -6,14 +6,13 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+
 import java.time.LocalDateTime;
 
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
@@ -23,7 +22,7 @@ public class Member extends Auditable {
     @Id
     @Column(name = "MEMBER_ID", nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int memberId;
+    private Long memberId;
 
     @JsonIgnore
     @Column(name = "PASSWORD", length = 128, nullable = false)
@@ -40,6 +39,9 @@ public class Member extends Auditable {
 
     @Column(name = "ADDRESS", nullable = false)
     private String address;
+
+    @Column(name = "EMAIL_VERIFIED_YN", length = 1)
+    private Boolean emailVerifiedYn;
 
     @Column(name = "MODIFIED_AT", nullable = false)
     private LocalDateTime modifiedAt;

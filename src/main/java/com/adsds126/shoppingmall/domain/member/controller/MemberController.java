@@ -10,6 +10,7 @@ import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -141,6 +142,17 @@ public class MemberController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("인증 처리중 오류가 발생했습니다.");
         }
+    }
+    @GetMapping("/member")
+    @PreAuthorize("hasAnyRole('USER','ADMIN')")
+    public ResponseEntity<Member> getMyMemberInfo() {
+        return ResponseEntity.ok(memberService.getMyMemberWithAuthorities().get());
+    }
+
+    @GetMapping("/member/{email}")
+    @PreAuthorize("hasAnyRole('ADMIN')")
+    public ResponseEntity<Member> getUserInfo(@PathVariable String email) {
+        return ResponseEntity.ok(memberService.getMemberWithAuthorities(email).get());
     }
 
 

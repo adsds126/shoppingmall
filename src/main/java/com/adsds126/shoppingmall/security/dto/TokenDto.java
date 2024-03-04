@@ -1,0 +1,13 @@
+package com.adsds126.shoppingmall.security.dto;
+
+
+import lombok.*;
+
+@Getter
+@Setter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+public class TokenDto {
+    private String token;
+}

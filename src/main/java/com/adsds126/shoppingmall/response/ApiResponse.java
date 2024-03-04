@@ -47,7 +47,7 @@ public class ApiResponse<T> {
         return new ApiResponse<>(new ApiResponseHeader(ResponseCode.NO_CONTENT.status, ResponseCode.NO_CONTENT.message), null);
     }
 
-    public static <T> ApiResponse<T> badRequest() {
+    public static <T> ApiResponse<T> badRequest(String s) {
         return new ApiResponse<>(new ApiResponseHeader(ResponseCode.BAD_REQUEST.status, ResponseCode.BAD_REQUEST.message), null);
     }
 

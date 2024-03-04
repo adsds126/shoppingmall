@@ -5,6 +5,7 @@ import com.adsds126.shoppingmall.domain.member.entity.EmailConfirmRandomKey;
 import com.adsds126.shoppingmall.domain.member.entity.Member;
 import com.adsds126.shoppingmall.domain.member.repository.EmailConfirmRandomKeyRepository;
 import com.adsds126.shoppingmall.domain.member.repository.MemberRepository;
+import com.adsds126.shoppingmall.domain.member.util.SecurityUtil;
 import com.adsds126.shoppingmall.exception.BusinessLogicException;
 import com.adsds126.shoppingmall.exception.ExceptionCode;
 import jakarta.mail.MessagingException;
@@ -42,7 +43,7 @@ public class MemberService {
         Member newMember = Member.builder()
                 .password(encryptedPassword)
                 .email(member.getEmail())
-                .roleType(RoleType.USER)
+                //.roleType(RoleType.USER)
                 .address(member.getAddress())
                 .emailVerifiedYn(false)
                 .modifiedAt(LocalDateTime.now())
@@ -211,5 +212,17 @@ public class MemberService {
         } catch (Exception e) {
             throw new RuntimeException("Failed to process email template.", e);
         }
+    }
+    // 유저,권한 정보를 가져오는 메소드
+    @Transactional(readOnly = true)
+    public Optional<Member> getMemberWithAuthorities(String email) {
+        return memberRepository.findOneWithAuthoritiesByEmail(email);
+    }
+
+    // 현재 securityContext에 저장된 email의 정보만 가져오는 메소드
+    @Transactional(readOnly = true)
+    public Optional<Member> getMyMemberWithAuthorities() {
+        return SecurityUtil.getCurrentEmail()
+                .flatMap(memberRepository::findOneWithAuthoritiesByEmail);
     }
 }

@@ -1,4 +1,8 @@
 spring:
+  jwt:
+    header: Authorization
+    secret: ${JWT_SECRET}
+    validity: ${JWT_VALIDITY}
   h2:
     console:
       enabled: true
@@ -20,3 +24,6 @@ spring:
     driver-class-name: org.h2.Driver
     username: sa
     password:
+logging:
+  level:
+    org.springframework.security: DEBUG

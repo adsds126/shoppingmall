@@ -37,6 +37,7 @@ public enum ExceptionCode {
      * # 404 NOT_FOUND
      *
      */
+    PRODUCT_NOT_FOUND(404,"상품이 존재하지 않습니다."),
     NOT_FOUND(404,"결과가 존재하지 않습니다."),
     TAG_NOT_FOUND(404,"태그가 존재하지 않습니다."),
     USER_NOT_FOUND(404, "등록되지 않은 사용자입니다."),

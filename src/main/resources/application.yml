@@ -1,8 +1,8 @@
 spring:
-  jwt:
-    header: Authorization
-    secret: ${JWT_SECRET}
-    validity: ${JWT_VALIDITY}
+#  jwt:
+#    header: Authorization
+#    secret: ${JWT_SECRET}
+#    validity: ${JWT_VALIDITY}
   h2:
     console:
       enabled: true
@@ -26,4 +26,6 @@ spring:
     password:
 logging:
   level:
-    org.springframework.security: DEBUG
+    org:
+      springframework:
+        security: DEBUG

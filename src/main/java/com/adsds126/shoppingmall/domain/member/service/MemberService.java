@@ -43,7 +43,7 @@ public class MemberService {
         Member newMember = Member.builder()
                 .password(encryptedPassword)
                 .email(member.getEmail())
-                //.roleType(RoleType.USER)
+                .roleType("USER")
                 .address(member.getAddress())
                 .emailVerifiedYn(false)
                 .modifiedAt(LocalDateTime.now())

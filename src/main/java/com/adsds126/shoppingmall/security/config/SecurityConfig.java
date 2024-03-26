@@ -1,15 +1,16 @@
 package com.adsds126.shoppingmall.security.config;
 
-import com.adsds126.shoppingmall.security.Filter.JwtFilter;
-import com.adsds126.shoppingmall.security.handler.JwtAccessDeniedHandler;
-import com.adsds126.shoppingmall.security.handler.JwtAuthenticationEntryPoint;
-import com.adsds126.shoppingmall.security.token.TokenProvider;
+//import com.adsds126.shoppingmall.security.Filter.JwtFilter;
+//import com.adsds126.shoppingmall.security.handler.JwtAccessDeniedHandler;
+//import com.adsds126.shoppingmall.security.handler.JwtAuthenticationEntryPoint;
+//import com.adsds126.shoppingmall.security.token.TokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authorization.AuthorizationDecision;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
@@ -20,6 +21,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.intercept.RequestAuthorizationContext;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -32,17 +34,42 @@ import java.util.function.Supplier;
 @Configuration
 @RequiredArgsConstructor
 public class SecurityConfig {
-    private final TokenProvider tokenProvider;
-//    private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
-//    private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
-    private static final String[] PERMIT_URL_ARRAY = {
-            "/api/authenticate"
-    };
+//    private final TokenProvider tokenProvider;
+////    private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+////    private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
+//    @Bean
+//    public JwtFilter jwtFilter() {
+//        return new JwtFilter(tokenProvider);
+//    }
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
+    /**
+     *
+     * FilterChain
+     *
+     */
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        http
+                .csrf(csrf -> csrf.disable())  // CSRF 보호 비활성화
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))  // CORS 설정 적용
+                .authorizeHttpRequests(authorize -> authorize   // HTTP 요청에 대한 인증 및 권한 정의
+                        .requestMatchers("/api/authenticate").permitAll()  // 로그인 API
+                        .requestMatchers("/h2-console/**").permitAll()  // H2 콘솔 접근 허용
+                        .requestMatchers("/api/v1/members/**").permitAll()  // 회원 관련 API
+                        .requestMatchers("/resources/**").permitAll()  // 정적 리소스 접근 허용
+                        .anyRequest().authenticated()  // 그 외 모든 요청은 인증 필요
+
+                );
+
+        // JwtFilter를 Security Filter Chain에 추가하는 예시
+        // 적절한 필터 위치에 따라 addFilterBefore() 또는 addFilterAfter() 메서드 사용
+
+        return http.build();  // HttpSecurity 객체 빌드 (단 한 번만 호출)
+    }
     /**
      * cors 설정
      */
@@ -82,22 +109,23 @@ public class SecurityConfig {
                         .contains(new SimpleGrantedAuthority("ADMIN"))
         );
     }
-    @Bean
-    public SecurityFilterChain filterChain(
-            HttpSecurity httpSecurity,
-            JwtFilter jwtFilter) throws Exception {
-        httpSecurity
-                .csrf(AbstractHttpConfigurer::disable)
-                .cors(cors -> cors.configurationSource(corsConfigurationSource()))  //cors설정 적용
-                .authorizeHttpRequests(authorize -> authorize   //HTTP 요청에 대한 인증 및 권한을 정의
-                        .requestMatchers("/api/authenticate").permitAll()//로그인 api
-                        .requestMatchers("/h2-console/**").permitAll()
-                        .requestMatchers("/api/v1/members/**").permitAll()
-                        .requestMatchers("/resources/**").permitAll()
-                        .anyRequest().authenticated()
-                ).build();
-        return httpSecurity.build();
-    }
+//    @Bean
+//    public SecurityFilterChain filterChain(
+//            HttpSecurity httpSecurity,
+//            JwtFilter jwtFilter) throws Exception {
+//        httpSecurity
+//                .csrf(AbstractHttpConfigurer::disable)
+//                .cors(cors -> cors.configurationSource(corsConfigurationSource()))  //cors설정 적용
+//                .authorizeHttpRequests(authorize -> authorize   //HTTP 요청에 대한 인증 및 권한을 정의
+//                        .requestMatchers("/api/authenticate").permitAll()//로그인 api
+//                        .requestMatchers("/h2-console/**").permitAll()
+//                        .requestMatchers("/api/v1/members/**").permitAll()
+//                        .requestMatchers("/resources/**").permitAll()
+//                        .anyRequest().authenticated()
+//                ).build();
+//        return httpSecurity.build();
+//    }
+
     @Bean
     @ConditionalOnProperty(name = "spring.h2.console.enabled",havingValue = "true")
     public WebSecurityCustomizer configureH2ConsoleEnable() {

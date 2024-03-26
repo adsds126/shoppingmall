@@ -38,7 +38,7 @@ public class ProductDto {
     @NoArgsConstructor
     public static class Response {
         @NotNull
-        private long productId;
+        private Long productId;
 
         @NotNull
         private String productName;

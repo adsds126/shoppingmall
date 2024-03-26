@@ -155,5 +155,4 @@ public class MemberController {
         return ResponseEntity.ok(memberService.getMemberWithAuthorities(email).get());
     }
 
-
 }
